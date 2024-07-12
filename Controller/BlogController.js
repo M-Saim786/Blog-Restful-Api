@@ -74,3 +74,22 @@ exports.updateBlog = async (req, res) => {
         })
     }
 }
+
+exports.deleteBlog = async (req, res) => {
+    try {
+        const blogToDelete = await BlogandCommentSchema.findOneAndDelete(req.params.id)
+        if (!blogToDelete) {
+            return res.statuss(400).json({
+                message: "Blog not found"
+            })
+        }
+        return res.status(200).json({
+            message: "Blog deleted successfully"
+        })
+    } catch (err) {
+        return res.status(500).json({
+            message: err.message
+        })
+    }
+
+}

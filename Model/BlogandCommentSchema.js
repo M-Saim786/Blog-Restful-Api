@@ -5,16 +5,19 @@ const commentSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    userId: {
+        type: mongoose.Schema.Types.ObjectId, ref: "user"
+    }
 }, { timestamps: true })
 
 const blogSchema = new mongoose.Schema({
     title: {
         type: String,
-        required: true
+        required: false
     },
     description: {
         type: String,
-        required: true
+        required: false
     },
     authorId: {
         type: mongoose.Schema.Types.ObjectId,
