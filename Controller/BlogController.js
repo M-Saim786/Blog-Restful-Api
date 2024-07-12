@@ -39,7 +39,7 @@ exports.getAllBlogs = async (req, res) => {
 
 exports.updateBlog = async (req, res) => {
     try {
-        const blogId = req.params.id;
+        const blogId = req.query.id;
         const blog = await BlogandCommentSchema.findOne({ _id: blogId });
         if (!blog) {
             return res.status(404).json({
@@ -77,7 +77,7 @@ exports.updateBlog = async (req, res) => {
 
 exports.deleteBlog = async (req, res) => {
     try {
-        const blogToDelete = await BlogandCommentSchema.findOneAndDelete(req.params.id)
+        const blogToDelete = await BlogandCommentSchema.findOneAndDelete(req.query.id)
         if (!blogToDelete) {
             return res.statuss(400).json({
                 message: "Blog not found"

@@ -56,8 +56,8 @@ exports.updateComment = async (req, res) => {
                 message: "Blog not found"
             })
         }
-
-        const commentToUpdate = checkBlog.comments.id(req.params.id)
+// console.log(req.query.id)
+        const commentToUpdate = checkBlog.comments.id(req.query.id)
         if (!commentToUpdate) {
             return res.status(404).json({
                 message: "Comment not found"
@@ -98,7 +98,7 @@ exports.deleteComment = async (req, res) => {
         }
 
         // Find the index of the comment within the blog's comments array
-        const commentIndex = checkBlog.comments.findIndex(comment => comment._id.toString() === req.params.id);
+        const commentIndex = checkBlog.comments.findIndex(comment => comment._id.toString() === req.query.id);
         if (commentIndex === -1) {
             return res.status(404).json({
                 message: "Comment not found"
