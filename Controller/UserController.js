@@ -4,6 +4,7 @@ require("dotenv").config()
 const secretKey = process.env.secretKey
 
 const userSchema = require("../Model/userSchema");
+const userValidate = require("../Validator/userValidator");
 
 exports.signUp = async (req, res) => {
     try {
@@ -12,6 +13,13 @@ exports.signUp = async (req, res) => {
             return res.status(400).json({
                 message: "email , password or username not found"
             })
+        await userValidate.validateAsync({ email, password, userName })
+        const checkUser = await userSchema.findOne({ email });
+        if (checkUser) {
+            return res.status(400).json({
+                message: "User already exists"
+            })
+        }
         req.body.password = await bcryptjs.hash(password, 12)
         const user = await userSchema(req.body).save();
         return res.status(200).json({
@@ -32,6 +40,8 @@ exports.login = async (req, res) => {
             return res.status(400).json({
                 message: "email , password not found"
             })
+        await userValidate.validateAsync({ email, password });
+
         const user = await userSchema.findOne({ email })
         if (!user)
             return res.status(404).json({
