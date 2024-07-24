@@ -1,4 +1,13 @@
 const BlogandCommentSchema = require("../Model/BlogandCommentSchema");
+require("dotenv").config();
+
+const cloudinary = require('cloudinary').v2;
+cloudinary.config({
+    cloud_name: process.env.cloudinary_Name,
+    api_key: process.env.cloudinary_Apikey,
+    api_secret: process.env.cloudinary_secret_key
+});
+
 
 exports.createBlogPost = async (req, res) => {
     try {
@@ -8,6 +17,19 @@ exports.createBlogPost = async (req, res) => {
                 message: "Title & description required"
             })
         }
+        const checkBlog = await BlogandCommentSchema.findOne({ title: title })
+        if (checkBlog) {
+            return res.status(400).json({
+                message: "Blog already added"
+            })
+        }
+        if (req.file) {
+            const cloud = await cloudinary.uploader.upload(req.file.path, {
+                folder: "blogImg"
+            })
+            req.body.blogImg = cloud.secure_url.split("upload/")[1]
+        }
+
         req.body.authorId = req.user._id;
         const blog = await BlogandCommentSchema(req.body).save();
         return res.status(200).json({
@@ -46,6 +68,13 @@ exports.updateBlog = async (req, res) => {
                 message: "Blog not found"
             })
         }
+        if (req.file) {
+            const cloud = await cloudinary.uploader.upload(req.file.path, {
+                folder: "blogImg"
+            })
+            req.body.blogImg = cloud.secure_url.split("upload/")[1]
+        }
+
 
         const updates = {};
         for (const field in req.body) {
@@ -58,14 +87,11 @@ exports.updateBlog = async (req, res) => {
             return res.status(400).json({ message: "No valid update fields provided" });
         }
 
-        await BlogandCommentSchema.findOneAndUpdate({ _id: blogId }, req.body);
-        return res.status(200).json({
-            message: "Blog Updated"
-        })
-
+        const updatedBlog = await BlogandCommentSchema.findOneAndUpdate({ _id: blogId }, req.body);
 
         return res.status(200).json({
-            data: blogs
+            message: "Blog Updated",
+            status: true
         })
 
     } catch (err) {
