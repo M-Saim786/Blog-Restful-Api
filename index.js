@@ -29,7 +29,7 @@ app.use(mainRouter)
 
 
 app.get('/', (req, res) => {
-  res.send('Hello World!');
+  res.send("Congratulations! Blog App Backend is Running \n You're good to go");
 });
 
 const port = process.env.Port || 3000; // Use environment variable for port or default to 3000
